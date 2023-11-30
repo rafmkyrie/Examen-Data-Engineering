@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans
 import umap
 import pandas as pd
 from prince import CA, PCA
+from sklearn.manifold import TSNE
 
 def dim_red(mat, p, method):
     '''
@@ -43,6 +44,9 @@ def dim_red(mat, p, method):
         red_mat = mat[:,:p]
         reducer = umap.UMAP(n_components=p)
         red_mat = reducer.fit_transform(mat)
+    elif method =='TSNE':
+	tsne = TSNE(n_compenents = p)
+	red_mat = tsne.fit_transform(mat)
         
     else:
         raise Exception("Please select one of the three methods : APC, AFC, UMAP")
@@ -82,7 +86,7 @@ methods = ['ACP', 'AFC', 'UMAP']
 for method in methods:
     print("Method: ", method)
     # Perform dimensionality reduction
-    red_emb = dim_red(embeddings, 20, method)
+    red_emb = dim_red(embeddings, 3, method)
 
     # Perform clustering
     pred = clust(red_emb, k)
