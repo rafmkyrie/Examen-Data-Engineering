@@ -2,6 +2,9 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
 from sentence_transformers import SentenceTransformer
 import numpy as np
+from prince import PCA
+import pandas as pd
+from sklearn.cluster import KMeans
 
 
 def dim_red(mat, p, method):
@@ -17,7 +20,14 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        red_mat = mat[:,:p]
+        # Convert input to pandas DataFrame if it's a numpy array
+        if isinstance(mat, np.ndarray):
+            mat = pd.DataFrame(mat)
+        
+        # Perform PCA
+        pca = PCA(n_components=p)
+        red_mat = pca.fit_transform(mat)
+        #red_mat = mat[:,:p]
         
     elif method=='AFC':
         red_mat = mat[:,:p]
@@ -43,8 +53,9 @@ def clust(mat, k):
     ------
         pred : list of predicted labels
     '''
-    
-    pred = np.random.randint(k, size=len(corpus))
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    pred = kmeans.fit_predict(mat)
+    #pred = np.random.randint(k, size=len(corpus))
     
     return pred
 
