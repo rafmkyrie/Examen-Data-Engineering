@@ -15,6 +15,15 @@ Docker plays a crucial role in providing a standardized and reproducible environ
 
 the image is available at: 
 
+## Bonus
+• Développer le modèle en local avec docker et monter un volume sur le projet, ça vous permet de remplir le Dockerfile au fur et à mesure et de travailler ensemble sur la même version de python et des librairies : **We mounted a volume with our container. It allowed us to to modify our files and add methods both in the host and in the container which makes it much easier to push our changes. It also minimizes errors and keeps us from rebuilding the image each time.**
+• Améliorer la qualité du rendu final, par exemple : permettre à l'utilisateur de choisir le(s) modèle(s) qu'il souhaite tester, ou bien executer le modèle dans un backend. Toute autre proposition sera appréciée : **We gave the user the choice to try any of the implemented methods or to run them all at once**
+• Visualisation des données sur un plan à l'aide de l'ACP, l'AFC et UMAP. **We added the notebook where we presented insightfull visulizations**
+• Rédaction d'une bonne documentation (README). **As you can see**
+• Sauvegarder les données pour ne pas les télécharger à chaque instantiation d'un nouveau conteneur (ou bien les installer dans l'image docker). **We loaded and saved the embeddings and labels that we got from the model and this allowed us to save a lot of time building the image (at least  and also the runtime times less time). This also improved the runtime which became at least 3 times faster**
+• Réaliser différentes initialisations et afficher la moyenne (et écart-type) des résultats. **We compared between  the methods and computed the average and standard deviation. This gives the user more insights about the methods and results obtained**
+• Toute autre méthode de réduction de la dimension ou algorithme de clustering seraient très appréciés. **We used 04 methods in total : ACP, AFC, UMAP and TSNE**
+
 ## Contributors
 KARABADJI Lina linakarabadji4@gmail.com
 OUANES Sofia is_ouanes@esi.dz
