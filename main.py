@@ -2,6 +2,9 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import pandas as pd
+from prince import CA
+from sklearn.cluster import KMeans
 
 
 def dim_red(mat, p, method):
@@ -20,7 +23,14 @@ def dim_red(mat, p, method):
         red_mat = mat[:,:p]
         
     elif method=='AFC':
-        red_mat = mat[:,:p]
+	# Convertir les données en un DataFrame
+    	df = pd.DataFrame(mat)
+    
+   	df_positive = df + np.abs(df.min().min())
+
+    	ca = CA(n_components=p)
+    	ca.fit(df_positive)
+    	red_mat = ca.row_coordinates(df_positive)
         
     elif method=='UMAP':
         red_mat = mat[:,:p]
@@ -43,8 +53,9 @@ def clust(mat, k):
     ------
         pred : list of predicted labels
     '''
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    pred = kmeans.fit_predict(mat)
     
-    pred = np.random.randint(k, size=len(corpus))
     
     return pred
 
