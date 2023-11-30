@@ -4,6 +4,8 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 from sklearn.cluster import KMeans
 import umap
+import pandas as pd
+from prince import CA, PCA
 
 def dim_red(mat, p, method):
     '''
@@ -18,10 +20,24 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        red_mat = mat[:,:p]
+        # Convert input to pandas DataFrame if it's a numpy array
+        if isinstance(mat, np.ndarray):
+            mat = pd.DataFrame(mat)
+        
+        # Perform PCA
+        pca = PCA(n_components=p)
+        red_mat = pca.fit_transform(mat)
+        #red_mat = mat[:,:p]
         
     elif method=='AFC':
-        red_mat = mat[:,:p]
+	# Convertir les données en un DataFrame
+    	df = pd.DataFrame(mat)
+    
+   	  df_positive = df + np.abs(df.min().min())
+
+    	ca = CA(n_components=p)
+    	ca.fit(df_positive)
+    	red_mat = ca.row_coordinates(df_positive)
         
     elif method=='UMAP':
         red_mat = mat[:,:p]
