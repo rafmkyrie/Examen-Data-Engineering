@@ -8,6 +8,9 @@ import pandas as pd
 from prince import CA, PCA
 from sklearn.manifold import TSNE
 
+import warnings
+warnings.filterwarnings("ignore")
+
 def dim_red(mat, p, method):
     '''
     Perform dimensionality reduction
@@ -21,17 +24,13 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        # Convert input to pandas DataFrame if it's a numpy array
         if isinstance(mat, np.ndarray):
             mat = pd.DataFrame(mat)
-        
-        # Perform PCA
+
         pca = PCA(n_components=p)
         red_mat = pca.fit_transform(mat)
-        #red_mat = mat[:,:p]
         
     elif method=='AFC':
-        # Convertir les données en un DataFrame
         df = pd.DataFrame(mat)
 
         df_positive = df + np.abs(df.min().min())
@@ -41,11 +40,11 @@ def dim_red(mat, p, method):
         red_mat = ca.row_coordinates(df_positive)
         
     elif method=='UMAP':
-        red_mat = mat[:,:p]
         reducer = umap.UMAP(n_components=p)
         red_mat = reducer.fit_transform(mat)
+
     elif method =='TSNE':
-        tsne = TSNE(n_compenents = p)
+        tsne = TSNE(n_components = p)
         red_mat = tsne.fit_transform(mat)
         
     else:
@@ -66,7 +65,7 @@ def clust(mat, k):
     ------
         pred : list of predicted labels
     '''
-    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans = KMeans(n_clusters=k)
     pred = kmeans.fit_predict(mat)
 
     return pred
@@ -78,22 +77,49 @@ labels = ng20.target[:2000]
 k = len(set(labels))
 
 # embedding
+print("Loading model...")
 model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+print("Embedding corpus...")
 embeddings = model.encode(corpus)
+print("Done\n\n")
 
-# Perform dimensionality reduction and clustering for each method
-methods = ['ACP', 'AFC', 'UMAP']
+choice = input('Choose the methods to use:  1. ACP   2. AFC   3. UMAP   4. TSNE   5. All\n')
+
+if choice == '1':
+    methods = ['ACP']
+elif choice == '2':
+    methods = ['AFC']
+elif choice == '3':
+    methods = ['UMAP']
+elif choice == '4':
+    methods = ['TSNE']
+elif choice == '5':
+    methods = ['ACP', 'AFC', 'UMAP', 'TSNE']
+else:
+    print("Choice not valid, running all methods")
+    methods = ['ACP', 'AFC', 'UMAP', 'TSNE']
+
 for method in methods:
-    print("Method: ", method)
-    # Perform dimensionality reduction
-    red_emb = dim_red(embeddings, 3, method)
+    nmi_scores = []
+    ari_scores = []
+    for _ in range(3):
+        # Perform dimensionality reduction
+        red_emb = dim_red(embeddings, 3, method)
 
-    # Perform clustering
-    pred = clust(red_emb, k)
+        # Perform clustering
+        pred = clust(red_emb, k)
 
-    # Evaluate clustering results
-    nmi_score = normalized_mutual_info_score(pred, labels)
-    ari_score = adjusted_rand_score(pred, labels)
+        # Evaluate clustering results
+        nmi_score = normalized_mutual_info_score(pred, labels)
+        ari_score = adjusted_rand_score(pred, labels)
+
+        nmi_scores.append(nmi_score)
+        ari_scores.append(ari_score)
+
+    mean_nmi = np.mean(nmi_scores)
+    std_nmi = np.std(nmi_scores)
+    mean_ari = np.mean(ari_scores)
+    std_ari = np.std(ari_scores)
 
     # Print results
-    print(f'Method: {method}\nNMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+    print(f'Method: {method}\nNMI: {mean_nmi:.2f} (+/- {std_nmi:.2f})\nARI: {mean_ari:.2f} (+/- {std_ari:.2f})\n')
