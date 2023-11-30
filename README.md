@@ -14,9 +14,13 @@ This GitHub repository contains a collaborative project focused on developing a 
 Docker plays a crucial role in providing a standardized and reproducible environment for developing and deploying the text clustering model. The Dockerfile defines the specifications for the Docker image, ensuring consistency in the Python version and required libraries across all collaborators. Local development is streamlined by running the Docker container with a mounted volume, allowing developers to work on the project in real-time while maintaining a shared Python environment. This collaborative approach minimizes compatibility issues and facilitates a seamless integration of individual contributions
 
 the image is available at: 
+
 (After creating the light version without sentence-trensformers in requirements)
+
 https://hub.docker.com/repository/docker/rafmkyrie/examen-data-engineering/general
+
 After pulling the image run this to create a container and volume from the image : 
+
 docker run -d -v local/path:/app/ rafmkyrie/examen-data-engineering:latest
 
 ## Bonus
