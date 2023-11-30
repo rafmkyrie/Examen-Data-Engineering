@@ -30,14 +30,14 @@ def dim_red(mat, p, method):
         #red_mat = mat[:,:p]
         
     elif method=='AFC':
-	# Convertir les données en un DataFrame
-    	df = pd.DataFrame(mat)
-    
-   	  df_positive = df + np.abs(df.min().min())
+        # Convertir les données en un DataFrame
+        df = pd.DataFrame(mat)
 
-    	ca = CA(n_components=p)
-    	ca.fit(df_positive)
-    	red_mat = ca.row_coordinates(df_positive)
+        df_positive = df + np.abs(df.min().min())
+
+        ca = CA(n_components=p)
+        ca.fit(df_positive)
+        red_mat = ca.row_coordinates(df_positive)
         
     elif method=='UMAP':
         red_mat = mat[:,:p]
@@ -80,6 +80,7 @@ embeddings = model.encode(corpus)
 # Perform dimensionality reduction and clustering for each method
 methods = ['ACP', 'AFC', 'UMAP']
 for method in methods:
+    print("Method: ", method)
     # Perform dimensionality reduction
     red_emb = dim_red(embeddings, 20, method)
 
