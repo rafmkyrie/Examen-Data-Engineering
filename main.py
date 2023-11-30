@@ -45,8 +45,8 @@ def dim_red(mat, p, method):
         reducer = umap.UMAP(n_components=p)
         red_mat = reducer.fit_transform(mat)
     elif method =='TSNE':
-	tsne = TSNE(n_compenents = p)
-	red_mat = tsne.fit_transform(mat)
+        tsne = TSNE(n_compenents = p)
+        red_mat = tsne.fit_transform(mat)
         
     else:
         raise Exception("Please select one of the three methods : APC, AFC, UMAP")
