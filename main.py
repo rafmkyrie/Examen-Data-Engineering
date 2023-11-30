@@ -1,12 +1,11 @@
-from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
-from sentence_transformers import SentenceTransformer
 import numpy as np
 from sklearn.cluster import KMeans
 import umap
 import pandas as pd
 from prince import CA, PCA
 from sklearn.manifold import TSNE
+import pickle
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -71,17 +70,11 @@ def clust(mat, k):
     return pred
 
 # import data
-ng20 = fetch_20newsgroups(subset='test')
-corpus = ng20.data[:2000]
-labels = ng20.target[:2000]
+embeddings = pickle.load(open('embeddings.pkl', 'rb'))
+labels = pickle.load(open('labels.pkl', 'rb'))
 k = len(set(labels))
 
-# embedding
-print("Loading model...")
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-print("Embedding corpus...")
-embeddings = model.encode(corpus)
-print("Done\n\n")
+print("Data loaded\n\n")
 
 choice = input('Choose the methods to use:  1. ACP   2. AFC   3. UMAP   4. TSNE   5. All\n')
 
